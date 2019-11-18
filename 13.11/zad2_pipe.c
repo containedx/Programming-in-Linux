@@ -23,12 +23,23 @@ int main(int argc, char** argv)
 	}
 
 	//rodzic odczytuje randomowa zmienna i wrzuca do kanalu 
-			int randata = open("/dev/urandom", O_RDONLY ); 
-			char input[nofbytes];			       	 	
+	//OPCJA 1 - float < trying 
+			FILE* randf = fopen("/dev/urandom", "r" ); 
+            double finput[10];
+            int k=0;
+            while(k!=10)
+            {    
+                fscanf(randf, "%lf", &finput[k]);
+                k++; 
+                printf("\tinput: %lf\n", finput[k]); 
+            }
+            fclose(randf);
+            
+    // OPCJA 2
+            int randata = open("/dev/urandom", O_RDONLY); 
+            char input[nofbytes];
 			read(randata, input, sizeof(input)); 
-			close(randata);
-            printf("\tinput: %s\n", input); 
-			
+            close(randata);
             
 	for(int i=0; i<N; i++)
 	{
@@ -51,7 +62,8 @@ int main(int argc, char** argv)
              fd[1] = open( mypipe, O_WRONLY);
              //char inputx[] = "inputtest"; 
              write(fd[1], input, sizeof(input));
-             printf("parent wrote: %s \n", input); 
+             printf("parent wrote: %s \n\n", input); 
+             wait(NULL); 
         }
 	}
 		
