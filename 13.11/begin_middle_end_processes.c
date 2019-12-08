@@ -4,6 +4,8 @@
 #include <time.h>
 #include <string.h>
 
+#define DESCRIPTOR 68
+
 char** cut_param(int n, char** p);
 
 int main( int argc, char** argv)
@@ -11,10 +13,8 @@ int main( int argc, char** argv)
         int fd[2];  //fd[0] - input 
 	            //fd[1] - output 
 
-	if( fork() == 0 )
-	{
-		printf("sforkowalem sie\n"); 
-                if(argc == 1) //ostatni 
+
+        if(argc == 1) //ostatni 
 		{
 			printf("Jestem ostatnim potomkiem, nie mam juz argumentow\n"); 
 
@@ -35,7 +35,7 @@ int main( int argc, char** argv)
 		else if( argc > 1 )
 		{	
 
-			//if( )
+			//if( zamkniety ) //=> pierwszy 
 			//{
 				// otworz potok
 				if( pipe(fd) == -1 ) 
@@ -45,7 +45,7 @@ int main( int argc, char** argv)
 				close(fd[1]);
 			//}	
 
-			//jesli otwarty to : 
+			//jesli otwarty to => srodkowy
 			//kopiuj do nowego potoku, wpisz nowy parametr
 
 			printf("%s\n", argv[1]);
@@ -53,7 +53,7 @@ int main( int argc, char** argv)
 			execvp( argv[0], param  ); 
 
 		}
-	}
+	
 
 	return 0; 
 }

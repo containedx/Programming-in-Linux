@@ -33,7 +33,8 @@ int main(int argc, char** argv)
                 k++; 
                 printf("\tinput: %lf\n", finput[k]); 
             }
-            fclose(randf);
+            fclose(randf);  
+            //niedziala. same 0.000
             
     // OPCJA 2
             int randata = open("/dev/urandom", O_RDONLY); 
@@ -48,6 +49,7 @@ int main(int argc, char** argv)
 		{
 			printf("Hello, here child number:> %d < \n", i+1);
 			//odczytuje z kanalu liczbe i tyle spi
+            
 			close(fd[1]);
             fd[0] = open( mypipe, O_RDONLY);
 			char output[nofbytes]; 
@@ -60,7 +62,6 @@ int main(int argc, char** argv)
         {
              close(fd[0]); 		
              fd[1] = open( mypipe, O_WRONLY);
-             //char inputx[] = "inputtest"; 
              write(fd[1], input, sizeof(input));
              printf("parent wrote: %s \n\n", input); 
              wait(NULL); 
@@ -78,7 +79,7 @@ int main(int argc, char** argv)
 		
 	
 
-// zrobic globalnie char [N] i odczytac z tego random a pozniej wrzucac po kolei od [i]. geniusz !
+// zrobic globalnie char [N] i odczytac z tego random a pozniej wrzucac po kolei od [i]  ???
 
 return 0;
 }
