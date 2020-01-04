@@ -1,0 +1,4 @@
+rekord 1
+arbuz 2
+pomelo 3
+kaki 4
