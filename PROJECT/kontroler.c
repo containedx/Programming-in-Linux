@@ -28,6 +28,7 @@ void goodbye();
 
 int main(int argc, char* argv[])
 {
+   
     int opt; 
     int N=5; 
 
@@ -54,7 +55,7 @@ int main(int argc, char* argv[])
 
             case 'l':
             printf("archiwum X : %s\n", optarg);
-            if(!(archiwum = open(optarg, O_WRONLY | O_CREAT, S_IRWXU ) ))
+            if(!(archiwum = open(optarg, O_WRONLY | O_CREAT | O_APPEND, S_IRWXU ) ))
             {
                 printf("*** error open archiwum ***"); 
             }; 
@@ -97,19 +98,22 @@ int main(int argc, char* argv[])
                 count = 0;
                 t++;
 
-                //char *args[] = {"./pisarz",  };
-
-                if( fork() == 0 )
+                int pid = fork();
+                if( pid == 0 )
                 {
-                    pidy[k] = getpid(); 
-                    //printf("\t hej, tu potomek nr %d, a moj pid to %d, a moj komunikat to %s\n", ilepisarzy, getpid(), buf);
+                    //printf("\ttu potomek, moj pid to %d, a moj komunikat to %s\n", getpid(), buf);
                     char fd[3], offset[3], Np[10];
                     sprintf(fd, "%d", tablica); 
                     sprintf(offset, "%d", t);
                     sprintf(Np, "-N %d", N); 
-                    execlp("./pisarz", "./pisarz", fd, offset, buf, Np, NULL);
+                    execlp("./pisarz", "./pisarz", fd, offset, buf, Np, NULL); 
+                }
+                else
+                {
+                    pidy[k] = pid; 
                     k++; 
                 }
+                
             } 
             else 
             {
@@ -117,7 +121,6 @@ int main(int argc, char* argv[])
                 t++;
             }         
         }     
-
 
         timer_t timerid; 
         
@@ -133,13 +136,10 @@ int main(int argc, char* argv[])
         timer_create( CLOCK_REALTIME, &sev, &timerid); 
         timer_settime(timerid, 0, &val, NULL); 
 
-        signal(SIGHUP, handler);
-        signal(SIGUSR1, SIG_IGN); 
-        signal(SIGTERM, SIG_IGN); 
+        signal(SIGHUP, handler); 
 
         while(1)
-        {
-            
+        {            
             if(cykl > 10)
                 goodbye(); 
         } 
@@ -149,9 +149,10 @@ int main(int argc, char* argv[])
 
 void handler(int sig)
 {
+    cykl++;
     if(cykl%2)
-    {
-        nanosleep(&ts, NULL); //spi dodatkowo 0,225sek, zeby miedzy sygnalami bylo 0,675sek
+    { 
+        nanosleep(&ts, NULL); //spi dodatkowo 0,225sek, zeby miedzy wysylaniem sygnalow bylo 0,675sek
         for(int i=0; i<ilepisarzy; i++)
         {
             kill(pidy[i], SIGUSR1); 
@@ -165,14 +166,13 @@ void handler(int sig)
         read(tablica, buff, 50);
         write(archiwum, buff, 50); 
     }
-
-    cykl++;
 }
 
 void goodbye()
 {
     for(int i=0; i<ilepisarzy; i++)
     {
+        //printf("\nzabijam %d\n", pidy[i]); 
         kill(pidy[i], SIGTERM); 
     } 
 

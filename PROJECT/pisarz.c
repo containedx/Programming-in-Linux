@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
+#include <fcntl.h>
+#include<sys/file.h>
 
 static void writing();
 int N=5;
@@ -12,13 +14,13 @@ char* komunikat;
 
 int main(int argc, char* argv[])
 {
-    printf("MOJ PID: %d\n", getpid()); 
+    //printf("MOJ PID: %d\n", getpid()); 
     int opt;
     fd = strtol(argv[1], 0, 10);
     offset = strtol(argv[2], 0, 10);
     komunikat = (char*)malloc(strlen(argv[3]) * sizeof(char)); 
     strcpy(komunikat, argv[3]); 
-
+ 
     //printf("nr deskryptora: %d\n", fd);
     //printf("przesuniecie: %d\n", offset); 
     //printf("komunikat: %s\n", komunikat); 
@@ -29,7 +31,7 @@ int main(int argc, char* argv[])
         if(opt == 'N')
         {
             N = strtol(optarg, 0, 10);
-            printf("krotnosc: %d\n", N); 
+            //printf("krotnosc: %d\n", N); 
         }
         if(N<0)
         {
@@ -54,17 +56,14 @@ int main(int argc, char* argv[])
 }
 
 static void writing()
-{
-        
+{         
     for(int i=0; i<N; i++)
-    {
+    {         
         lseek(fd, offset, 0);
         if( (write(fd, komunikat, strlen(komunikat))) == -1 )
         {
             perror("******error write na tablice ogloszen!*******");
             return; 
-        }
-    }
-       
-
+        }         
+    }    
 }
